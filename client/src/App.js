@@ -106,5 +106,5 @@ class App extends Component {
     );
   }
 }
-
+//https://ipfs.io/ipfs/${this.state.ipfsHash
 export default App;
