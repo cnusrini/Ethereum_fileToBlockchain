@@ -106,5 +106,5 @@ class App extends Component {
     );
   }
 }
-//https://ipfs.io/ipfs/${this.state.ipfsHash
+//https://ipfs.io/ipfs/QmZmsiQ4Sw4JTtdXaFxQWYJFLAGEXmREa8j3nRbQXReEYG
 export default App;
