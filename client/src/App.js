@@ -22,16 +22,13 @@ class App extends Component {
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
-
-      );
+      //const instance = new web3.eth.Contract( SimpleStorageContract.abi, deployedNetwork && deployedNetwork.address);
+      const instance = new web3.eth.Contract( SimpleStorageContract.abi, deployedNetwork && '0xF873be4E20F6aB18800D59D5c16400bC2FE7735e');
 
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ web3, accounts, contract: instance });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -41,35 +38,51 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
 
-    // Stores a given value, 5 by default.
-    const tx = await contract.methods.set(5).send({ from: accounts[0] });
-    console.log('tx',tx);
-
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
-  };
-  onSubmit = async(event) => {
+  onSubmit = async (event) => {
     event.preventDefault();
-    ipfs.files.add(this.state.buffer , (error, ipfsHash) => {
+    console.log('in onSUbmit fn');
+    const { accounts, contract } = this.state;
+    const Alice = this.state.accounts[0];
+    
+    const ipfsreturn = await ipfs.add(this.state.buffer);
+    this.setState({ipfsHash:ipfsreturn[0].hash});
+    //console.log('in on Subit handler', ipfsreturn[0].hash);
+    console.log('in on Subit handler ipfshash', this.state.ipfsHash);
+
+
+    //console.log('contract', contract);
+    const tx = await contract.methods.set(this.state.ipfsHash).send({from:Alice});
+    console.log('tx',tx);
+    /*
+    try {
+
+      const tx = await contract.methods.set('e').send({from: alice});
+      console.log('tx',tx);
+    } catch (e) {
+console.log(e.message);
+    }
+    */
+
+    //const response = await contract.methods.get().call({ from: accounts[0]});
+    //const uploadTime = await contract.methods.uploadTime().call({ from: accounts[0]});
+
+    /*
+    ipfs.add(this.state.buffer , (error, ipfsHash) => {
       console.log(error, ipfsHash);
       if(error){
         console.error();
       }
       else{
         this.setState({ipfsHash:ipfsHash[0].hash});
-        console.log('ipfshash',ipfsHash);
+        console.log('ipfshash is:', this.state.ipfsHash);
       }
+    },
 
-    });
-    console.log('in on Subit handler');
+    console.log('in on Subit handler'),
+  )
+  */
+
   }
   captureFile = async(event) => {
     event.preventDefault();
@@ -81,6 +94,7 @@ class App extends Component {
       console.log('buffer value',this.state.buffer);
     }
     console.log('in captureFile handler');
+
   }
   render() {
     if (!this.state.web3) {
@@ -89,19 +103,13 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Your Image to upload in IPFS and Ethereum blockchain!</h1>
-        <img src= {`https://ipfs.io/ipfs/${this.state.ipfsHash}`} alt=''/>
+
+        <img src={`https://ipfs.io/ipfs/${this.state.ipfsHash}`} alt=''/>
         <form onSubmit={this.onSubmit}>
           <input type='file' onChange={this.captureFile}/>
           <input type='submit'/>
         </form>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+
       </div>
     );
   }

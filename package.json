@@ -5,15 +5,16 @@
   "main": "truffle.js",
   "directories": {
     "test": "test"
-
   },
   "dependencies": {
     "ipfs-api": "^26.1.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "web3": "^1.0.0-beta.35"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" :"react-scripts start"
+    "start": "react-scripts start"
   },
   "author": "",
   "license": "ISC"
