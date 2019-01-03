@@ -1,1 +1,1 @@
-https://img.shields.io/github/license/:user/:repo.svg
+![](https://img.shields.io/npm/l:packageName.svg)
